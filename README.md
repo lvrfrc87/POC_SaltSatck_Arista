@@ -6,13 +6,10 @@ files in `salt_config_files` go under `/etc/salt`
 
  ### Topology
 
- leaf1 -- spine0 -- leaf2
+ leaf1 -- spine0
+ leaf2 -----|
+ leaf3 -----|
 
-            |
-
-            |
-
-          leaf3
 
 I used this POC to demonstrate how it is possible to provision a new switch
 running a single `state.sls` based on a common JINJA template.
