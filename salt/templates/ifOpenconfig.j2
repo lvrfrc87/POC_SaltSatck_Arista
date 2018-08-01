@@ -1,0 +1,25 @@
+{% if grains.os|lower == 'eos' -%}
+  {% for ifName, ifDetails in pillar.openconfig_interfaces.interfaces.interface.items() -%}
+  interface {{ ifName }}
+    mtu {{ ifDetails.config.mtu }}
+    description {{ ifDetails.config.description }}
+    {% if 'Ethernet' in ifName -%}
+      no switchport
+      {% endif -%}
+    {% if ifDetails.config.enabled == true -%}
+      no shutdown
+    {% elif ifDetails.config.enabled == false -%}
+      shutdown
+    {% endif -%}
+    {% set subIf = ifDetails.subinterfaces.subinterfaces -%}
+    {% for subId, subDetails in subIf.items() -%}
+      {#% if subId != '0' -%}
+        interface {{ ifName }}.{{ subId }}
+        {% endif -%#}
+      {% set subIfAddr = subDetails.ipv4.addresses.address -%}
+      {% for _, addr in subIfAddr.items() -%}
+        ip address {{ addr.config.ip }}/{{ addr.config.prefix_lenght }}
+        {% endfor -%}
+      {% endfor -%}
+  {% endfor -%}
+{% endif -%}

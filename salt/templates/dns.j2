@@ -1,0 +1,7 @@
+{% if grains.vendor|lower == 'arista' -%}
+  {% for server in servers -%}
+  ip name-server vrf default {{ server }}
+  {# ntp server {{ pillar['ntpServers'] }} version 4 source Management1 #}
+  {# ntp server {{ salt.pillar.get('ntpServers') }} version 4 source Management1 #}
+  {% endfor -%}
+{% endif -%}

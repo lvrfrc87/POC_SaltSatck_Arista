@@ -1,0 +1,8 @@
+{% set routeOutput = salt.route.show('0.0.0.0/0', 'static') -%}
+{% set defaultRoutes = routeOutput['out'] -%}
+{% if not defaultRoutes -%}
+  {% if grains.vendor|lower == 'arista' -%}
+  ip route vrf default 0.0.0.0/0 {{ nextHopP }}
+  ip route vrf default 0.0.0.0/0 {{ nextHopB }} 5
+  {% endif -%}
+{% endif -%}

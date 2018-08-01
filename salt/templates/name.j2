@@ -1,0 +1,4 @@
+{% if grains.vendor|lower == 'arista' -%}
+  ip domain-name {{ grains.hostname }}.tm
+              {# {{ salt['grains.get']('hostname') }} #}
+{% endif -%}

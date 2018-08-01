@@ -1,0 +1,6 @@
+{% if grains.vendor|lower == 'arista' -%}
+  {% for server in logServers -%}
+  logging host {{ server }}
+  {% endfor -%}
+  logging trap {{ pillar.logLevel }}
+{% endif -%}

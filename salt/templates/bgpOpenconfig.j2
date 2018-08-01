@@ -1,0 +1,24 @@
+{% if grains.os|lower == 'eos' -%}
+{% for bgpGlobal in pillar.openconfig_bgp.bgp.global.values() -%}
+  router bgp {{ bgpGlobal.as }}
+  router-id {{ bgpGlobal.router_id }}
+  {% endfor -%}
+  {% for bgpNeighb, neighOpts in pillar.openconfig_bgp.bgp.neighbors.items() -%}
+    neighbor {{ bgpNeighb }} remote-as {{ neighOpts.config.peer_as }}
+    neighbor {{ bgpNeighb }} password 7 {{ neighOpts.config.auth_password }}
+    neighbor {{ bgpNeighb }} soft-reconfiguration inbound all
+    {% if neighOpts.config.enabled == false -%}
+      neighbor {{ bgpNeighb }} shutdown
+      {% endif -%}
+    {% if neighOpts.graceful_restart.config.enabled == true -%}
+      neighbor {{ bgpNeighb }} graceful-restart
+      {% endif -%}
+    {% set rr = neighOpts.route_reflector.config -%}
+    bgp cluster-id {{ rr.route_reflector_cluster_id}}
+    neighbor {{ rr.route_reflector_client }} route-reflector-client
+    {% for afi, afiOpts in neighOpts.afi_safis.afi_safi_name.items() -%}
+      {% set prfxLimit = afiOpts.ipv4_unicast.prefix_limit -%}
+      neighbor {{ bgpNeighb }} maximum-routes {{ prfxLimit.config.max_prefixes }} warning-only
+      {% endfor -%}
+    {% endfor -%}
+{% endif -%}

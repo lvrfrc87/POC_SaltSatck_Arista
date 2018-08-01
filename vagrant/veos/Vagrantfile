@@ -1,0 +1,36 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "80"]
+  end
+
+  config.vm.define "leaf-1" do |leaf1|
+    leaf1.vm.box = "vEOS-lab-4.20.1F"
+    leaf1.vm.network :forwarded_port, guest: 22, host: 11201, id: 'ssh'
+    leaf1.vm.network :forwarded_port, guest: 443, host: 11443, id: 'https'
+    leaf1.vm.network "private_network", virtualbox__intnet: "link_1", ip: "169.254.1.11", auto_config: false
+  end
+
+  config.vm.define "spine-0" do |spine0|
+    spine0.vm.box = "vEOS-lab-4.20.1F"
+    spine0.vm.network :forwarded_port, guest: 22, host: 12201, id: 'ssh'
+    spine0.vm.network :forwarded_port, guest: 443, host: 12443, id: 'https'
+    spine0.vm.network "private_network", virtualbox__intnet: "link_1", ip: "169.254.1.11", auto_config: false
+    spine0.vm.network "private_network", virtualbox__intnet: "link_2", ip: "169.254.2.11", auto_config: false
+    spine0.vm.network "private_network", virtualbox__intnet: "link_3", ip: "169.254.3.11", auto_config: false
+  end
+
+  config.vm.define "leaf-2" do |leaf2|
+    leaf2.vm.box = "vEOS-lab-4.20.1F"
+    leaf2.vm.network :forwarded_port, guest: 22, host: 13201, id: 'ssh'
+    leaf2.vm.network :forwarded_port, guest: 443, host: 13443, id: 'https'
+    leaf2.vm.network "private_network", virtualbox__intnet: "link_2", ip: "169.254.2.11", auto_config: false
+  end
+
+  config.vm.define "leaf-3" do |leaf3|
+    leaf3.vm.box = "vEOS-lab-4.20.1F"
+    leaf3.vm.network :forwarded_port, guest: 22, host: 14201, id: 'ssh'
+    leaf3.vm.network :forwarded_port, guest: 443, host: 14443, id: 'https'
+    leaf3.vm.network "private_network", virtualbox__intnet: "link_3", ip: "169.254.3.11", auto_config: false
+  end
+end
