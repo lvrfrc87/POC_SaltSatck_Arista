@@ -7,8 +7,11 @@ files in `salt_config_files` go under `/etc/salt`
  ### Topology
 
  leaf1 -- spine0 -- leaf2
+
             |
+
             |
+
           leaf3
 
 I used this POC to demonstrate how it is possible to provision a new switch
